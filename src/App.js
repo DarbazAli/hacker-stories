@@ -2,6 +2,35 @@ import React, { useState, useEffect } from 'react'
 import Search from './components/Search.js'
 import List from './components/List.js'
 
+const initialStories = [
+  {
+    title: 'React',
+    url: 'https://reactjs.org/',
+    author: 'Jordan Walke',
+    num_comments: 3,
+    points: 4,
+    objectID: 0,
+  },
+
+  {
+    title: 'Redux',
+    url: 'https://redux.js.org/',
+    author: 'Dan Abramov, Andrew Clark',
+    num_comments: 2,
+    points: 4,
+    objectID: 1,
+  },
+
+  {
+    title: 'View',
+    url: 'https://view.js.org/',
+    author: 'Van don norman',
+    num_comments: 1,
+    points: 5,
+    objectID: 2,
+  },
+]
+
 // create a custom hook
 // this custom hook creates a search term to be used as a state inside App component
 // key -> is the key to localState parameter
@@ -18,40 +47,21 @@ const useSemiPersistentState = (key, initialState) => {
 }
 
 const App = () => {
-  const stories = [
-    {
-      title: 'React',
-      url: 'https://reactjs.org/',
-      author: 'Jordan Walke',
-      num_comments: 3,
-      points: 4,
-      objectID: 0,
-    },
-
-    {
-      title: 'Redux',
-      url: 'https://redux.js.org/',
-      author: 'Dan Abramov, Andrew Clark',
-      num_comments: 2,
-      points: 4,
-      objectID: 1,
-    },
-
-    {
-      title: 'View',
-      url: 'https://view.js.org/',
-      author: 'Van don norman',
-      num_comments: 1,
-      points: 5,
-      objectID: 2,
-    },
-  ]
-
   // main state of the App
   const [searchTerm, setSearchTerm] = useSemiPersistentState('search', 'React')
 
+  const [stories, setStories] = useState(initialStories)
+
   // search handler function
   const handleSearch = (e) => setSearchTerm(e.target.value)
+
+  // remvoer function
+  const handleRemoveStory = (item) => {
+    const newStories = stories.filter(
+      (story) => item.objectID !== story.objectID
+    )
+    setStories(newStories)
+  }
 
   // filtered sotires
   const searchStories = stories.filter((story) =>
@@ -72,7 +82,7 @@ const App = () => {
         Search
       </Search>
 
-      <List list={searchStories} />
+      <List list={searchStories} onRemoveItem={handleRemoveStory} />
     </div>
   )
 }
