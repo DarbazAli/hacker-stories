@@ -1,10 +1,10 @@
 import React from 'react'
 
-const Item = ({ item: { title, url, author, num_comments, points } }) => (
+const Item = ({ item: { title, author, url, num_comments, points } }) => (
   <div>
-    <p>
+    <h3>
       <a href={url}>{title}</a>
-    </p>
+    </h3>
     <p>
       Author: <b>{author}</b>
     </p>

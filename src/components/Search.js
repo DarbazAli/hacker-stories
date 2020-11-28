@@ -6,7 +6,13 @@ const Search = ({ onSearch, term }) => (
       <b>Search</b>
     </label>
     <br />
-    <input type='text' id='search' value={term} onChange={onSearch} />
+    <input
+      type='text'
+      id='search'
+      onChange={onSearch}
+      value={term}
+      placeholder='search for stories'
+    />
   </div>
 )
 

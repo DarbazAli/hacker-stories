@@ -1,7 +1,6 @@
 import React, { useState } from 'react'
-import List from './components/List.js'
-
 import Search from './components/Search.js'
+import List from './components/List.js'
 
 const App = () => {
   const stories = [
@@ -35,7 +34,7 @@ const App = () => {
 
   const [searchTerm, setSearchTerm] = useState('')
 
-  const handleChange = (e) => setSearchTerm(e.target.value)
+  const handleSearch = (e) => setSearchTerm(e.target.value)
 
   const searchStories = stories.filter((story) =>
     story.title.toLowerCase().includes(searchTerm.toLowerCase())
@@ -43,8 +42,8 @@ const App = () => {
 
   return (
     <div>
-      <h1>Hello Hackers</h1>
-      <Search onSearch={handleChange} term={searchTerm} />
+      <h1>Hacker Stories</h1>
+      <Search onSearch={handleSearch} term={searchTerm} />
       <List list={searchStories} />
     </div>
   )
