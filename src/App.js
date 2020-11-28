@@ -2,6 +2,21 @@ import React, { useState, useEffect } from 'react'
 import Search from './components/Search.js'
 import List from './components/List.js'
 
+// create a custom hook
+// this custom hook creates a search term to be used as a state inside App component
+// key -> is the key to localState parameter
+// initialState -> the inital state that the hook uses
+
+const useSemiPersistentState = (key, initialState) => {
+  const [value, setValue] = useState(localStorage.getItem(key) || initialState)
+
+  useEffect(() => {
+    localStorage.setItem(key, value)
+  }, [key, value])
+
+  return [value, setValue]
+}
+
 const App = () => {
   const stories = [
     {
@@ -32,16 +47,13 @@ const App = () => {
     },
   ]
 
-  const [searchTerm, setSearchTerm] = useState(
-    localStorage.getItem('search') || 'React'
-  )
+  // main state of the App
+  const [searchTerm, setSearchTerm] = useSemiPersistentState('search', 'React')
 
-  useEffect(() => {
-    localStorage.setItem('search', searchTerm)
-  }, [searchTerm])
-
+  // search handler function
   const handleSearch = (e) => setSearchTerm(e.target.value)
 
+  // filtered sotires
   const searchStories = stories.filter((story) =>
     story.title.toLowerCase().includes(searchTerm.toLowerCase())
   )
