@@ -61,7 +61,17 @@ const App = () => {
   return (
     <div>
       <h1>Hacker Stories</h1>
-      <Search onSearch={handleSearch} term={searchTerm} />
+
+      <Search
+        onSearch={handleSearch}
+        value={searchTerm}
+        id='search'
+        type='text'
+        isFocused={true}
+      >
+        Search
+      </Search>
+
       <List list={searchStories} />
     </div>
   )
