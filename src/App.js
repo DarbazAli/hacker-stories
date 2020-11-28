@@ -31,6 +31,10 @@ const initialStories = [
   },
 ]
 
+const getAsyncStories = () =>
+  new Promise((resolve) =>
+    setTimeout(() => resolve({ data: { stories: initialStories } }), 2000)
+  )
 // create a custom hook
 // this custom hook creates a search term to be used as a state inside App component
 // key -> is the key to localState parameter
@@ -48,9 +52,21 @@ const useSemiPersistentState = (key, initialState) => {
 
 const App = () => {
   // main state of the App
-  const [searchTerm, setSearchTerm] = useSemiPersistentState('search', 'React')
+  const [searchTerm, setSearchTerm] = useSemiPersistentState('search', '')
 
-  const [stories, setStories] = useState(initialStories)
+  const [stories, setStories] = useState([])
+  const [isLoading, setIsLoading] = useState(false)
+  const [isError, setIsError] = useState(false)
+
+  useEffect(() => {
+    setIsLoading(true)
+    getAsyncStories()
+      .then((result) => {
+        setStories(result.data.stories)
+        setIsLoading(false)
+      })
+      .catch(() => setIsError(true))
+  }, [])
 
   // search handler function
   const handleSearch = (e) => setSearchTerm(e.target.value)
@@ -81,8 +97,12 @@ const App = () => {
       >
         Search
       </Search>
-
-      <List list={searchStories} onRemoveItem={handleRemoveStory} />
+      {isError && <p>Something went wrong ...</p>}
+      {isLoading ? (
+        <p>Loading ...</p>
+      ) : (
+        <List list={searchStories} onRemoveItem={handleRemoveStory} />
+      )}
     </div>
   )
 }
