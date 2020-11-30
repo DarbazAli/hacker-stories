@@ -1,6 +1,7 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useReducer } from 'react'
 import Search from './components/Search.js'
 import List from './components/List.js'
+import storiesReducer from './reducers/storiesReducer.js'
 
 const initialStories = [
   {
@@ -31,11 +32,17 @@ const initialStories = [
   },
 ]
 
+/*--------------------------------------------------------
+DATA FETCH ASYNCROUNIZER
+---------------------------------------------------------*/
 const getAsyncStories = () =>
   new Promise((resolve) =>
     setTimeout(() => resolve({ data: { stories: initialStories } }), 2000)
   )
-// create a custom hook
+
+/*--------------------------------------------------------
+CUSTOM HOOK
+---------------------------------------------------------*/
 // this custom hook creates a search term to be used as a state inside App component
 // key -> is the key to localState parameter
 // initialState -> the inital state that the hook uses
@@ -50,11 +57,16 @@ const useSemiPersistentState = (key, initialState) => {
   return [value, setValue]
 }
 
+/*--------------------------------------------------------
+APP COMPONENT
+---------------------------------------------------------*/
 const App = () => {
   // main state of the App
   const [searchTerm, setSearchTerm] = useSemiPersistentState('search', '')
 
-  const [stories, setStories] = useState([])
+  // const [stories, setStories] = useState([])
+  const [stories, dispatchStories] = useReducer(storiesReducer, [])
+
   const [isLoading, setIsLoading] = useState(false)
   const [isError, setIsError] = useState(false)
 
@@ -62,7 +74,11 @@ const App = () => {
     setIsLoading(true)
     getAsyncStories()
       .then((result) => {
-        setStories(result.data.stories)
+        // setStories(result.data.stories)
+        dispatchStories({
+          type: 'SET_STORIES',
+          payload: result.data.stories,
+        })
         setIsLoading(false)
       })
       .catch(() => setIsError(true))
@@ -73,10 +89,10 @@ const App = () => {
 
   // remvoer function
   const handleRemoveStory = (item) => {
-    const newStories = stories.filter(
-      (story) => item.objectID !== story.objectID
-    )
-    setStories(newStories)
+    dispatchStories({
+      type: 'REMOVE_STORY',
+      payload: item,
+    })
   }
 
   // filtered sotires
