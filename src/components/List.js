@@ -1,9 +1,9 @@
 import React from 'react'
 
 const List = ({ list }) =>
-  list.map((item) => <Item key={item.objectID} item={item} />)
+  list.map((item) => <Item key={item.objectID} {...item} />)
 
-const Item = ({ item: { url, title, author, num_comments, points } }) => (
+const Item = ({ url, title, author, num_comments, points }) => (
   <div>
     <a href={url}>
       <h4>{title}</h4>
