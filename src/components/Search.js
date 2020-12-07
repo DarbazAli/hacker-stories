@@ -1,18 +1,33 @@
-import React from 'react'
+import React, { useRef, useEffect } from 'react'
 
-const Search = ({ onSearch, search }) => {
+const InputWithLabel = ({
+  onInputChange,
+  value,
+  id,
+  children,
+  type = 'text',
+  isFocused,
+}) => {
+  const inputRef = useRef()
+
+  useEffect(() => {
+    if (isFocused && inputRef.current) {
+      inputRef.current.focus()
+    }
+  }, [isFocused])
   return (
     <div>
-      <label htmlFor='search'>Search:</label>
+      <label htmlFor={children}>{children}</label>
       <input
-        type='text'
-        value={search}
-        name='search'
-        id='search'
-        onChange={onSearch}
+        type={type}
+        name={children}
+        id={id}
+        value={value}
+        onChange={onInputChange}
+        ref={inputRef}
       />
     </div>
   )
 }
 
-export default Search
+export default InputWithLabel

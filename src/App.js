@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react'
 import stories from './data.js'
 
 import List from './components/List.js'
-import Search from './components/Search.js'
+import InputWithLabel from './components/Search.js'
 
 /* 
 ====================================================================
@@ -42,11 +42,21 @@ const App = () => {
     <div>
       <h1>Hacker Stories</h1>
 
-      <Search onSearch={handleSearch} search={searchTerm} />
+      <InputWithLabel
+        onInputChange={handleSearch}
+        value={searchTerm}
+        id='search'
+        type='text'
+        isFocused={true}
+      >
+        <Label label='Search' />
+      </InputWithLabel>
 
       <List list={searchedStories} />
     </div>
   )
 }
+
+const Label = ({ label }) => <strong>{label}:</strong>
 
 export default App
