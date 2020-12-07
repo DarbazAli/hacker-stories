@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import stories from './data.js'
+import initialStories from './data.js'
 
 import List from './components/List.js'
 import InputWithLabel from './components/Search.js'
@@ -26,6 +26,7 @@ APP COMPONENT
 */
 const App = () => {
   const [searchTerm, setSearchTerm] = useSemiPresistentState('search', 'react')
+  const [stories, setStories] = useState(initialStories)
 
   useEffect(() => {
     localStorage.setItem('search', searchTerm)
@@ -33,6 +34,13 @@ const App = () => {
 
   const handleSearch = (e) => {
     setSearchTerm(e.target.value)
+  }
+
+  const handleRemoveStory = (item) => {
+    const newStories = stories.filter(
+      (story) => item.objectID !== story.objectID
+    )
+    setStories(newStories)
   }
 
   const searchedStories = stories.filter((story) =>
@@ -52,7 +60,7 @@ const App = () => {
         <Label label='Search' />
       </InputWithLabel>
 
-      <List list={searchedStories} />
+      <List list={searchedStories} onRemoveStory={handleRemoveStory} />
     </div>
   )
 }
