@@ -1,9 +1,10 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useReducer } from 'react'
 import initialStories from './data.js'
 
 import List from './components/List.js'
 import InputWithLabel from './components/Search.js'
 import Loading from './components/Loading.js'
+import storiesReducer from './reducers/storiesReducer.js'
 
 /* 
 ====================================================================
@@ -26,7 +27,7 @@ GET DATA ASYNCHRONOUSLY
 ====================================================================
 */
 const getAsyncStories = () =>
-  new Promise((resolve) =>
+  new Promise((resolve, reject) =>
     setTimeout(() => resolve({ data: { stories: initialStories } }), 2000)
   )
 
@@ -37,19 +38,26 @@ APP COMPONENT
 */
 const App = () => {
   const [searchTerm, setSearchTerm] = useSemiPresistentState('search', '')
-  const [stories, setStories] = useState([])
-  const [isLoading, setIsLoading] = useState(false)
-  const [isError, setIsError] = useState(false)
+  const [stories, dispatchStories] = useReducer(storiesReducer, {
+    data: [],
+    isLoading: false,
+    isError: false,
+  })
 
   useEffect(() => {
-    setIsLoading(true)
+    dispatchStories({ type: 'STORIES_FETCH_INIT' })
 
     getAsyncStories()
       .then((result) => {
-        setStories(result.data.stories)
-        setIsLoading(false)
+        dispatchStories({
+          type: 'STORIES_FETCH_SUCCESS',
+          payload: result.data.stories,
+        })
       })
-      .catch(() => setIsError(true))
+
+      .catch(() => {
+        dispatchStories({ type: 'STORIES_FETCH_FAILURE' })
+      })
   }, [])
 
   const handleSearch = (e) => {
@@ -57,13 +65,13 @@ const App = () => {
   }
 
   const handleRemoveStory = (item) => {
-    const newStories = stories.filter(
-      (story) => item.objectID !== story.objectID
-    )
-    setStories(newStories)
+    dispatchStories({
+      type: 'REMOVE_STORY',
+      payload: item,
+    })
   }
 
-  const searchedStories = stories.filter((story) =>
+  const searchedStories = stories.data.filter((story) =>
     story.title.toLowerCase().includes(searchTerm.toLowerCase())
   )
   return (
@@ -81,9 +89,11 @@ const App = () => {
       </InputWithLabel>
 
       {/* give feedback if an error ocured */}
-      {isError && <p style={{ color: 'red' }}>Something went wrong...</p>}
+      {stories.isError && (
+        <p style={{ color: 'red' }}>Something went wrong...</p>
+      )}
 
-      {isLoading ? (
+      {stories.isLoading ? (
         <Loading />
       ) : (
         <List list={searchedStories} onRemoveStory={handleRemoveStory} />
