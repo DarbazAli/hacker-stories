@@ -21,16 +21,28 @@ const useSemiPresistentState = (key, initialState) => {
 
 /* 
 ====================================================================
+GET DATA ASYNCHRONOUSLY
+====================================================================
+*/
+const getAsyncStories = () =>
+  new Promise((resolve) =>
+    setTimeout(() => resolve({ data: { stories: initialStories } }), 2000)
+  )
+
+/* 
+====================================================================
 APP COMPONENT
 ====================================================================
 */
 const App = () => {
-  const [searchTerm, setSearchTerm] = useSemiPresistentState('search', 'react')
-  const [stories, setStories] = useState(initialStories)
+  const [searchTerm, setSearchTerm] = useSemiPresistentState('search', '')
+  const [stories, setStories] = useState([])
 
   useEffect(() => {
-    localStorage.setItem('search', searchTerm)
-  }, [searchTerm])
+    getAsyncStories().then((result) => {
+      setStories(result.data.stories)
+    })
+  }, [])
 
   const handleSearch = (e) => {
     setSearchTerm(e.target.value)
