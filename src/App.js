@@ -6,6 +6,8 @@ import InputWithLabel from './components/Search.js'
 import Loading from './components/Loading.js'
 import storiesReducer from './reducers/storiesReducer.js'
 
+const API_ENDPOINT = 'https://hn.algolia.com/api/v1/search?query='
+
 /* 
 ====================================================================
 CUSTOM HOOK
@@ -37,7 +39,7 @@ APP COMPONENT
 ====================================================================
 */
 const App = () => {
-  const [searchTerm, setSearchTerm] = useSemiPresistentState('search', '')
+  const [searchTerm, setSearchTerm] = useSemiPresistentState('search', 'react')
   const [stories, dispatchStories] = useReducer(storiesReducer, {
     data: [],
     isLoading: false,
@@ -45,20 +47,24 @@ const App = () => {
   })
 
   useEffect(() => {
+    if (!searchTerm) return
+
     dispatchStories({ type: 'STORIES_FETCH_INIT' })
 
-    getAsyncStories()
+    fetch(`${API_ENDPOINT}${searchTerm}`)
+      .then((response) => response.json())
+
       .then((result) => {
         dispatchStories({
           type: 'STORIES_FETCH_SUCCESS',
-          payload: result.data.stories,
+          payload: result.hits,
         })
       })
 
       .catch(() => {
         dispatchStories({ type: 'STORIES_FETCH_FAILURE' })
       })
-  }, [])
+  }, [searchTerm])
 
   const handleSearch = (e) => {
     setSearchTerm(e.target.value)
@@ -71,9 +77,9 @@ const App = () => {
     })
   }
 
-  const searchedStories = stories.data.filter((story) =>
-    story.title.toLowerCase().includes(searchTerm.toLowerCase())
-  )
+  // const searchedStories = stories.data.filter((story) =>
+  //   story.title.toLowerCase().includes(searchTerm.toLowerCase())
+  // )
   return (
     <div>
       <h1>Hacker Stories</h1>
@@ -96,7 +102,7 @@ const App = () => {
       {stories.isLoading ? (
         <Loading />
       ) : (
-        <List list={searchedStories} onRemoveStory={handleRemoveStory} />
+        <List list={stories.data} onRemoveStory={handleRemoveStory} />
       )}
     </div>
   )
