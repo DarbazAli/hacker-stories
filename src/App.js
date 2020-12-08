@@ -1,9 +1,10 @@
 import React, { useState, useEffect, useReducer, useCallback } from 'react'
+import axios from 'axios'
 
 import List from './components/List.js'
-import InputWithLabel from './components/Search.js'
 import Loading from './components/Loading.js'
 import storiesReducer from './reducers/storiesReducer.js'
+import { SearchForm } from './components/SearchForm'
 
 const API_ENDPOINT = 'https://hn.algolia.com/api/v1/search?query='
 
@@ -37,24 +38,18 @@ const App = () => {
 
   const [url, setUrl] = useState(`${API_ENDPOINT}${searchTerm}`)
 
-  const handleFetchStories = useCallback(() => {
-    // if (!searchTerm) return
-
+  const handleFetchStories = useCallback(async () => {
     dispatchStories({ type: 'STORIES_FETCH_INIT' })
 
-    fetch(url)
-      .then((response) => response.json())
-
-      .then((result) => {
-        dispatchStories({
-          type: 'STORIES_FETCH_SUCCESS',
-          payload: result.hits,
-        })
+    try {
+      const { data } = await axios.get(url)
+      dispatchStories({
+        type: 'STORIES_FETCH_SUCCESS',
+        payload: data.hits,
       })
-
-      .catch(() => {
-        dispatchStories({ type: 'STORIES_FETCH_FAILURE' })
-      })
+    } catch {
+      dispatchStories({ type: 'STORIES_FETCH_FAILURE' })
+    }
   }, [url])
 
   useEffect(() => {
@@ -72,32 +67,20 @@ const App = () => {
     })
   }
 
-  const handleSearchSubmit = () => {
+  const handleSearchSubmit = (e) => {
     setUrl(`${API_ENDPOINT}${searchTerm}`)
+    e.preventDefault()
   }
 
   return (
     <div>
       <h1>Hacker Stories</h1>
 
-      <InputWithLabel
-        onInputChange={handleSearch}
-        value={searchTerm}
-        id='search'
-        type='text'
-        isFocused={true}
-      >
-        <Label label='Search' />
-      </InputWithLabel>
-
-      <button
-        className='button-primary'
-        type='button'
-        disabled={!searchTerm}
-        onClick={handleSearchSubmit}
-      >
-        Submit
-      </button>
+      <SearchForm
+        searchTerm={searchTerm}
+        onSearchInput={handleSearch}
+        onSearchSubmit={handleSearchSubmit}
+      />
 
       <div>
         {/* give feedback if an error ocured */}
@@ -118,7 +101,5 @@ const App = () => {
     </div>
   )
 }
-
-const Label = ({ label }) => <strong>{label}:</strong>
 
 export default App
