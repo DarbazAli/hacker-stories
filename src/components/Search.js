@@ -16,7 +16,7 @@ const InputWithLabel = ({
     }
   }, [isFocused])
   return (
-    <div>
+    <>
       <label htmlFor={children}>{children}</label>
       <input
         type={type}
@@ -26,7 +26,7 @@ const InputWithLabel = ({
         onChange={onInputChange}
         ref={inputRef}
       />
-    </div>
+    </>
   )
 }
 

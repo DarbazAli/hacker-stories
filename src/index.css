@@ -8,3 +8,20 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+
+.story-item span {
+  margin-right: 20px;
+}
+
+.story-item p {
+  margin-bottom: 10px;
+}
+
+hr {
+  margin-top: 10px;
+}
+
+input[type='text'] {
+  display: inline;
+  margin-right: 10px;
+}

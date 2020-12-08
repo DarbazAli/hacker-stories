@@ -9,13 +9,23 @@ const Item = ({ item, onRemoveStory }) => {
   const { url, title, author, num_comments, points } = item
 
   return (
-    <div>
+    <div className='story-item'>
       <a href={url}>
         <h4>{title}</h4>
       </a>
-      <p>Author: {author}</p>
-      <p>comments: {num_comments}</p>
-      <p>Points: {points}</p>
+
+      <p>
+        <span>
+          Author: <strong>{author}</strong>
+        </span>
+        <span>
+          comments: <strong>{num_comments}</strong>
+        </span>
+        <span>
+          Points: <strong>{points}</strong>
+        </span>
+      </p>
+
       <button onClick={() => onRemoveStory(item)}>Dismiss</button>
       <hr />
     </div>

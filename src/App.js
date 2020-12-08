@@ -1,5 +1,4 @@
-import React, { useState, useEffect, useReducer } from 'react'
-import initialStories from './data.js'
+import React, { useState, useEffect, useReducer, useCallback } from 'react'
 
 import List from './components/List.js'
 import InputWithLabel from './components/Search.js'
@@ -25,16 +24,6 @@ const useSemiPresistentState = (key, initialState) => {
 
 /* 
 ====================================================================
-GET DATA ASYNCHRONOUSLY
-====================================================================
-*/
-const getAsyncStories = () =>
-  new Promise((resolve, reject) =>
-    setTimeout(() => resolve({ data: { stories: initialStories } }), 2000)
-  )
-
-/* 
-====================================================================
 APP COMPONENT
 ====================================================================
 */
@@ -46,12 +35,14 @@ const App = () => {
     isError: false,
   })
 
-  useEffect(() => {
-    if (!searchTerm) return
+  const [url, setUrl] = useState(`${API_ENDPOINT}${searchTerm}`)
+
+  const handleFetchStories = useCallback(() => {
+    // if (!searchTerm) return
 
     dispatchStories({ type: 'STORIES_FETCH_INIT' })
 
-    fetch(`${API_ENDPOINT}${searchTerm}`)
+    fetch(url)
       .then((response) => response.json())
 
       .then((result) => {
@@ -64,7 +55,11 @@ const App = () => {
       .catch(() => {
         dispatchStories({ type: 'STORIES_FETCH_FAILURE' })
       })
-  }, [searchTerm])
+  }, [url])
+
+  useEffect(() => {
+    handleFetchStories()
+  }, [handleFetchStories])
 
   const handleSearch = (e) => {
     setSearchTerm(e.target.value)
@@ -77,9 +72,10 @@ const App = () => {
     })
   }
 
-  // const searchedStories = stories.data.filter((story) =>
-  //   story.title.toLowerCase().includes(searchTerm.toLowerCase())
-  // )
+  const handleSearchSubmit = () => {
+    setUrl(`${API_ENDPOINT}${searchTerm}`)
+  }
+
   return (
     <div>
       <h1>Hacker Stories</h1>
@@ -94,16 +90,31 @@ const App = () => {
         <Label label='Search' />
       </InputWithLabel>
 
-      {/* give feedback if an error ocured */}
-      {stories.isError && (
-        <p style={{ color: 'red' }}>Something went wrong...</p>
-      )}
+      <button
+        className='button-primary'
+        type='button'
+        disabled={!searchTerm}
+        onClick={handleSearchSubmit}
+      >
+        Submit
+      </button>
 
-      {stories.isLoading ? (
-        <Loading />
-      ) : (
-        <List list={stories.data} onRemoveStory={handleRemoveStory} />
-      )}
+      <div>
+        {/* give feedback if an error ocured */}
+        {stories.isError && (
+          <p style={{ color: 'red' }}>Something went wrong...</p>
+        )}
+
+        {stories.isLoading ? (
+          <Loading />
+        ) : (
+          <List
+            className='story-list'
+            list={stories.data}
+            onRemoveStory={handleRemoveStory}
+          />
+        )}
+      </div>
     </div>
   )
 }
