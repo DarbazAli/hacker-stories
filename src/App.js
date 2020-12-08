@@ -3,6 +3,7 @@ import initialStories from './data.js'
 
 import List from './components/List.js'
 import InputWithLabel from './components/Search.js'
+import Loading from './components/Loading.js'
 
 /* 
 ====================================================================
@@ -37,11 +38,18 @@ APP COMPONENT
 const App = () => {
   const [searchTerm, setSearchTerm] = useSemiPresistentState('search', '')
   const [stories, setStories] = useState([])
+  const [isLoading, setIsLoading] = useState(false)
+  const [isError, setIsError] = useState(false)
 
   useEffect(() => {
-    getAsyncStories().then((result) => {
-      setStories(result.data.stories)
-    })
+    setIsLoading(true)
+
+    getAsyncStories()
+      .then((result) => {
+        setStories(result.data.stories)
+        setIsLoading(false)
+      })
+      .catch(() => setIsError(true))
   }, [])
 
   const handleSearch = (e) => {
@@ -72,7 +80,14 @@ const App = () => {
         <Label label='Search' />
       </InputWithLabel>
 
-      <List list={searchedStories} onRemoveStory={handleRemoveStory} />
+      {/* give feedback if an error ocured */}
+      {isError && <p style={{ color: 'red' }}>Something went wrong...</p>}
+
+      {isLoading ? (
+        <Loading />
+      ) : (
+        <List list={searchedStories} onRemoveStory={handleRemoveStory} />
+      )}
     </div>
   )
 }
