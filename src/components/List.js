@@ -1,6 +1,9 @@
 import React, { useState } from 'react'
 import { sortBy } from 'lodash'
 
+import arrowUp from '../assets/ic_arrow_drop_up_18px.svg'
+import arrowDown from '../assets/ic_arrow_drop_down_18px.svg'
+
 const SORTS = {
   NONE: (list) => list,
   TITLE: (list) => sortBy(list, 'title'),
@@ -30,17 +33,45 @@ const List = ({ list, onRemoveStory }) => {
       <div>
         <h4>Sort by:</h4>
         <button type='button' onClick={() => handleSort('TITLE')}>
-          Title
+          Title{' '}
+          <img
+            src={
+              sort.sortKey === 'TITLE' && !sort.isReversed ? arrowUp : arrowDown
+            }
+            alt='arrow icon'
+          />
         </button>
 
         <button type='button' onClick={() => handleSort('AUTHOR')}>
-          Author
+          Author{' '}
+          <img
+            src={
+              sort.sortKey === 'AUTHOR' && !sort.isReversed
+                ? arrowUp
+                : arrowDown
+            }
+            alt='arrow icon'
+          />
         </button>
         <button type='button' onClick={() => handleSort('COMMENT')}>
-          Comment
+          Comment{' '}
+          <img
+            src={
+              sort.sortKey === 'COMMENT' && !sort.isReversed
+                ? arrowUp
+                : arrowDown
+            }
+            alt='arrow icon'
+          />
         </button>
         <button type='button' onClick={() => handleSort('POINT')}>
-          Point
+          Point{' '}
+          <img
+            src={
+              sort.sortKey === 'POINT' && !sort.isReversed ? arrowUp : arrowDown
+            }
+            alt='arrow icon'
+          />
         </button>
       </div>
 
