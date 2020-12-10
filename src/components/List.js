@@ -10,14 +10,20 @@ const SORTS = {
 }
 
 const List = ({ list, onRemoveStory }) => {
-  const [sort, setSort] = useState('NONE')
+  const [sort, setSort] = useState({
+    sortKey: 'NONE',
+    isReversed: false,
+  })
 
   const handleSort = (sortKey) => {
-    setSort(sortKey)
+    const isReversed = sort.sortKey === sortKey && !sort.isReversed
+    setSort({ sortKey, isReversed })
   }
 
-  const sortFunction = SORTS[sort]
-  const sortedList = sortFunction(list)
+  const sortFunction = SORTS[sort.sortKey]
+  const sortedList = sort.isReversed
+    ? sortFunction(list).reverse()
+    : sortFunction(list)
 
   return (
     <div>
