@@ -32,47 +32,10 @@ const List = ({ list, onRemoveStory }) => {
     <div>
       <div>
         <h4>Sort by:</h4>
-        <button type='button' onClick={() => handleSort('TITLE')}>
-          Title{' '}
-          <img
-            src={
-              sort.sortKey === 'TITLE' && !sort.isReversed ? arrowUp : arrowDown
-            }
-            alt='arrow icon'
-          />
-        </button>
-
-        <button type='button' onClick={() => handleSort('AUTHOR')}>
-          Author{' '}
-          <img
-            src={
-              sort.sortKey === 'AUTHOR' && !sort.isReversed
-                ? arrowUp
-                : arrowDown
-            }
-            alt='arrow icon'
-          />
-        </button>
-        <button type='button' onClick={() => handleSort('COMMENT')}>
-          Comment{' '}
-          <img
-            src={
-              sort.sortKey === 'COMMENT' && !sort.isReversed
-                ? arrowUp
-                : arrowDown
-            }
-            alt='arrow icon'
-          />
-        </button>
-        <button type='button' onClick={() => handleSort('POINT')}>
-          Point{' '}
-          <img
-            src={
-              sort.sortKey === 'POINT' && !sort.isReversed ? arrowUp : arrowDown
-            }
-            alt='arrow icon'
-          />
-        </button>
+        <SortButton onSort={handleSort} state={sort} sortKey='TITLE' />
+        <SortButton onSort={handleSort} state={sort} sortKey='AUTHOR' />
+        <SortButton onSort={handleSort} state={sort} sortKey='COMMENT' />
+        <SortButton onSort={handleSort} state={sort} sortKey='POINT' />
       </div>
 
       {sortedList.map((item) => (
@@ -106,6 +69,20 @@ const Item = ({ item, onRemoveStory }) => {
       <button onClick={() => onRemoveStory(item)}>Dismiss</button>
       <hr />
     </div>
+  )
+}
+
+const SortButton = ({ onSort, state, sortKey }) => {
+  return (
+    <button type='button' onClick={() => onSort(sortKey)}>
+      {sortKey}
+      <img
+        src={
+          state.sortKey === sortKey && !state.isReversed ? arrowUp : arrowDown
+        }
+        alt='arrow icon'
+      />
+    </button>
   )
 }
 export default List
