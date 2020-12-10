@@ -3,6 +3,7 @@ import { sortBy } from 'lodash'
 
 import arrowUp from '../assets/ic_arrow_drop_up_18px.svg'
 import arrowDown from '../assets/ic_arrow_drop_down_18px.svg'
+import closeIcon from '../assets/ic_close_36px.svg'
 
 const SORTS = {
   NONE: (list) => list,
@@ -51,7 +52,7 @@ const Item = ({ item, onRemoveStory }) => {
   return (
     <div className='story-item'>
       <a href={url}>
-        <h4>{title}</h4>
+        <h5>{title}</h5>
       </a>
 
       <p>
@@ -64,9 +65,11 @@ const Item = ({ item, onRemoveStory }) => {
         <span>
           Points: <strong>{points}</strong>
         </span>
-      </p>
 
-      <button onClick={() => onRemoveStory(item)}>Dismiss</button>
+        <span onClick={() => onRemoveStory(item)} style={{ cursor: 'pointer' }}>
+          <img src={closeIcon} alt='close icon' />
+        </span>
+      </p>
       <hr />
     </div>
   )
